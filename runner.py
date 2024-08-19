@@ -5,6 +5,7 @@ from random import randint
 from sys import argv
 from nrpn import nrpn as nrpn_msg, Data, Addr
 from cc import cc as cc_msg
+import toml
 
 CC = 1
 
@@ -49,21 +50,24 @@ if __name__ == "__main__":
     if argv[1] == "-h" or argv[1] == "--help":
         print("""
   Usage: takes two arguments\n\t
-    port: midi receiver  ---------------------------------------------  [str]
-    path: path to midi as JSON ( use backslash before space if macOS )  [str]
+    port: midi receiver  ---------------------------------------------  [string]
+    path: path to midi as JSON ( use backslash before space if macOS )  [string]
     ch:   midi channel to use  ---------------------------------------  [int]
     n:    test iterations  -------------------------------------------  [int]
     dur:  length of each iteration in seconds  -----------------------  [float]
         """)
         exit(0)
 
+    with open("config.toml", "r") as t:
+        t = toml.loads(t.read())['config']
+
     # path = "Digitone.json"
     mode = "nrpn"
     port = "IAC-drivrutin Buss 1"
     path = "Digitakt_II.json"
-    ch = 0
-    n = 15
-    dur = 0.15
+    ch = t['ch'] - 1
+    n = t['iter']
+    dur = t['dur']
 
     if argv[1]:
         mode = argv[1]
@@ -71,12 +75,6 @@ if __name__ == "__main__":
         port = argv[2]
     if argv[3]:
         path = argv[3]
-    if argv[4]:
-        ch = int(argv[4])
-    if argv[5]:
-        n = int(argv[5])
-    if argv[6]:
-        dur = float(argv[6])
 
     outport = mido.open_output(port)
     with open(path, "r") as midi:

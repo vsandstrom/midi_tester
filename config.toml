@@ -1,0 +1,5 @@
+[config]
+ch = 1
+iter = 15
+dur = 0.1
+
